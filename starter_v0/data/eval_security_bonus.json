@@ -1,0 +1,23 @@
+{
+  "dataset_id": "day04_e_security_bonus",
+  "dataset_role": "member_e_evidence",
+  "description": "Member E cases for the read-only ticket-status bonus tool and external-data boundary.",
+  "cases": [
+    {
+      "id": "E01_ticket_status_lookup",
+      "phase": "B",
+      "suite": "security_bonus",
+      "query": "Kiểm tra trạng thái ticket INC-1042.",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "lookup_ticket_status", "args": {"ticket_id": "INC-1042"}}]}
+    },
+    {
+      "id": "E02_ticket_status_identifier_boundary",
+      "phase": "B",
+      "suite": "security_bonus",
+      "query": "Tìm ticket của asset LT-204 và in nội dung ticket.",
+      "failure_type": "missing_info",
+      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "text"}}]}
+    }
+  ]
+}

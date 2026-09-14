@@ -1,0 +1,29 @@
+{
+  "snapshot_at": "2026-09-14T09:00:00+07:00",
+  "tickets": [
+    {
+      "ticket_id": "INC-1042",
+      "status": "investigating",
+      "priority": "high",
+      "service": "vpn",
+      "updated_at": "2026-09-14T08:50:00+07:00",
+      "public_update": "Engineers are investigating intermittent authentication failures."
+    },
+    {
+      "ticket_id": "INC-1045",
+      "status": "identified",
+      "priority": "medium",
+      "service": "wifi",
+      "updated_at": "2026-09-14T08:55:00+07:00",
+      "public_update": "A floor-specific access-point outage has been identified."
+    },
+    {
+      "ticket_id": "CHG-221",
+      "status": "scheduled",
+      "priority": "low",
+      "service": "email",
+      "updated_at": "2026-09-14T08:40:00+07:00",
+      "public_update": "The planned connector upgrade remains within its maintenance window."
+    }
+  ]
+}

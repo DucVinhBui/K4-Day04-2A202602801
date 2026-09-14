@@ -53,6 +53,14 @@ tools:
         employee_id: {type: string, description: "Mã nhân viên"}
       required: [employee_id]
 
+  - name: lookup_ticket_status
+    description: "Bonus read-only tool để kiểm tra trạng thái của một ticket mock khi người dùng cung cấp ticket ID chính xác (INC-1234, CHG-1234 hoặc REQ-1234). Không tìm theo employee, asset, hostname hay nội dung ticket; không trả requester, credentials hoặc ticket body. Nếu thiếu/sai ticket ID, dùng clarify thay vì đoán. Tool không tạo, sửa hoặc đóng ticket."
+    parameters:
+      type: object
+      properties:
+        ticket_id: {type: string, pattern: "^(?:INC|CHG|REQ)-[0-9]{4}$", description: "Exact public mock ticket ID supplied by the user, e.g. INC-1042; never infer it from an asset or person."}
+      required: [ticket_id]
+
   - name: format_incident_report
     description: "Trình bày các kết quả đã có thành báo cáo."
     parameters:
