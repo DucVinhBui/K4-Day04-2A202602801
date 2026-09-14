@@ -41,7 +41,7 @@ tools:
     parameters:
       type: object
       properties:
-        asset_id: {type: string, description: "Mã tài sản do người dùng cung cấp rõ ràng, ví dụ LT-204; không được suy đoán"}
+        asset_id: {type: string, description: "Mã tài sản do người dùng cung cấp rõ ràng, dạng tiền tố LT/DT/MB/PR/RM kèm số, ví dụ LT-204, DT-031, PR-404, RM-501; laptop, desktop, mobile, máy in và thiết bị phòng họp đều là asset được quản lý và tra cứu được bằng tool này; không được suy đoán mã"}
         check: {type: string, enum: [all, network, vpn, security, hardware, software], default: "all", description: "Luôn truyền nhóm chẩn đoán rõ ràng; all cho kiểm tra tổng thể, vpn cho lỗi VPN trên thiết bị"}
       required: [asset_id, check]
 
