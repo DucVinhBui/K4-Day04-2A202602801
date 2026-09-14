@@ -8,7 +8,7 @@
 tools:
   # ---------------- Core tools ----------------
   - name: clarify
-    description: "Gửi một câu hỏi cho người dùng."
+    description: "Tạm dừng để hỏi người dùng về thông tin bắt buộc còn thiếu hoặc mơ hồ, ví dụ asset ID hay employee ID. Dùng tool này thay vì tự đoán identifier."
     parameters:
       type: object
       properties:
@@ -28,21 +28,21 @@ tools:
       required: [query]
 
   - name: check_service_status
-    description: "Kiểm tra trạng thái một dịch vụ."
+    description: "Đọc trạng thái của một dịch vụ dùng chung trên toàn công ty (VPN, email, SSO, Wi-Fi hoặc printing) trong production hoặc staging. Dùng cho outage/health của shared service; không dùng để chẩn đoán một thiết bị cụ thể và không cần asset ID."
     parameters:
       type: object
       properties:
-        service: {type: string, enum: [vpn, email, sso, wifi, printing], description: "Tên dịch vụ"}
-        environment: {type: string, enum: [production, staging], default: "production", description: "Môi trường"}
+        service: {type: string, enum: [vpn, email, sso, wifi, printing], description: "Tên shared service cần kiểm tra"}
+        environment: {type: string, enum: [production, staging], default: "production", description: "Môi trường dịch vụ; chỉ dùng mặc định production khi người dùng không nêu môi trường"}
       required: [service]
 
   - name: inspect_device
-    description: "Kiểm tra thông tin và chẩn đoán thiết bị."
+    description: "Đọc inventory và diagnostic snapshot của một thiết bị công ty cụ thể. Chỉ dùng khi có asset ID rõ ràng; nếu thiếu hoặc mơ hồ thì gọi clarify, không tự đoán. Không dùng tool này để kiểm tra trạng thái shared service trên toàn công ty."
     parameters:
       type: object
       properties:
-        asset_id: {type: string, description: "Mã tài sản"}
-        check: {type: string, enum: [all, network, vpn, security, hardware, software], default: "all", description: "Nhóm kiểm tra"}
+        asset_id: {type: string, description: "Mã tài sản do người dùng cung cấp rõ ràng, ví dụ LT-204; không được suy đoán"}
+        check: {type: string, enum: [all, network, vpn, security, hardware, software], default: "all", description: "Nhóm chẩn đoán trên chính thiết bị này"}
       required: [asset_id]
 
   - name: lookup_user
