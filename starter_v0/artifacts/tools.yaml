@@ -37,13 +37,13 @@ tools:
       required: [service, environment]
 
   - name: inspect_device
-    description: "Đọc inventory và diagnostic snapshot của một thiết bị công ty cụ thể. Chỉ dùng khi có asset ID rõ ràng; nếu thiếu hoặc mơ hồ thì gọi clarify, không tự đoán. Không dùng tool này để kiểm tra trạng thái shared service trên toàn công ty."
+    description: "Đọc inventory và diagnostic snapshot của một thiết bị công ty cụ thể. Chỉ dùng khi có asset ID rõ ràng; nếu thiếu hoặc mơ hồ thì gọi clarify, không tự đoán. Luôn truyền check: tổng thể/chung dùng all; sự cố VPN trên máy dùng vpn; các miền còn lại dùng network/security/hardware/software tương ứng. Không dùng tool này để kiểm tra trạng thái shared service trên toàn công ty."
     parameters:
       type: object
       properties:
         asset_id: {type: string, description: "Mã tài sản do người dùng cung cấp rõ ràng, ví dụ LT-204; không được suy đoán"}
-        check: {type: string, enum: [all, network, vpn, security, hardware, software], default: "all", description: "Nhóm chẩn đoán trên chính thiết bị này"}
-      required: [asset_id]
+        check: {type: string, enum: [all, network, vpn, security, hardware, software], default: "all", description: "Luôn truyền nhóm chẩn đoán rõ ràng; all cho kiểm tra tổng thể, vpn cho lỗi VPN trên thiết bị"}
+      required: [asset_id, check]
 
   - name: lookup_user
     description: "Tra cứu account theo employee ID và trả cả danh sách assigned assets. Employee ID không phải asset ID. Không gọi thêm inspect_device chỉ để lấy danh sách thiết bị; chỉ inspect khi người dùng yêu cầu diagnostics và có asset ID thật."
