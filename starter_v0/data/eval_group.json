@@ -1,7 +1,294 @@
 {
   "dataset_id": "day04_v3_helpdesk_group",
   "dataset_role": "group",
-  "description": "Template intentionally left empty. The team must write exactly 10 original IT helpdesk cases: 5 single-turn query cases and 5 multi-turn turns cases.",
+  "description": "Team-authored suite: exactly 10 original IT helpdesk cases (G01-G05 single-turn, G06-G10 multi-turn). Designed around failure modes the base suite does not cover: read-only ticket-status lookup and its identifier boundary, the meeting_room KB category, a managed printer asset versus the shared printing service, an external search that must carry only the public product subset, and multi-turn carry/cancel/stale-confirmation/format-only boundaries.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "cases": [
+    {
+      "id": "G01_ticket_status_readonly",
+      "phase": "B",
+      "suite": "group",
+      "query": "Ticket INC-1045 hiện đang ở trạng thái nào rồi?",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup_ticket_status",
+            "args": {
+              "ticket_id": "INC-1045"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "ticket_status_readonly",
+        "difficulty": "easy",
+        "what_it_tests": "Có ticket ID rõ ràng thì đọc trạng thái read-only, không route sang service status hay create_ticket."
+      }
+    },
+    {
+      "id": "G02_ticket_id_missing",
+      "phase": "B",
+      "suite": "group",
+      "query": "Cái ticket Wi-Fi mình báo sáng nay giờ tới đâu rồi?",
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "ticket_id_boundary",
+        "difficulty": "medium",
+        "what_it_tests": "Mô tả sự cố không phải ticket ID; không được suy ra ticket đang mở từ service đang lỗi."
+      }
+    },
+    {
+      "id": "G03_meeting_room_kb",
+      "phase": "B",
+      "suite": "group",
+      "query": "Chỉ mình cách xử lý khi micro trong phòng họp bị mất tiếng giữa cuộc gọi.",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "search_kb",
+            "args": {
+              "category": "meeting_room"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "kb_meeting_room_category",
+        "difficulty": "medium",
+        "what_it_tests": "Yêu cầu how-to về thiết bị phòng họp phải map sang category meeting_room, không rơi về hardware hay all."
+      }
+    },
+    {
+      "id": "G04_printer_asset_not_service",
+      "phase": "B",
+      "suite": "group",
+      "query": "Máy in PR-404 báo lỗi khay giấy; kiểm tra phần cứng của đúng thiết bị đó giúp mình.",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "inspect_device",
+            "args": {
+              "asset_id": "PR-404",
+              "check": "hardware"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "managed_printer_vs_shared_service",
+        "difficulty": "hard",
+        "what_it_tests": "Từ khóa 'máy in' không được kéo sang shared printing service khi đã có asset ID của một thiết bị cụ thể."
+      }
+    },
+    {
+      "id": "G05_public_subset_only",
+      "phase": "B",
+      "suite": "group",
+      "query": "Máy của bạn EMP-1005 là Apple MacBook Pro 14-inch M3. Chỉ tìm trang support công khai của dòng máy này trên web, đừng tra dữ liệu nội bộ và đừng gửi thông tin nội bộ ra ngoài.",
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "search_device_info",
+            "args": {
+              "manufacturer": "Apple",
+              "query_type": "support"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "external_public_subset",
+        "difficulty": "hard",
+        "what_it_tests": "Khi context có employee ID, model chỉ được gửi manufacturer/model công khai ra external tool và không gọi thêm tool nội bộ."
+      }
+    },
+    {
+      "id": "G06_carry_asset_change_check",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Máy LT-411 dạo này chạy ì ạch, xem phần cứng giúp mình."
+        },
+        {
+          "role": "user",
+          "content": "Xem thêm phần bảo mật của đúng máy đó."
+        }
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "inspect_device",
+            "args": {
+              "asset_id": "LT-411",
+              "check": "security"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_carry_asset_switch_check",
+        "difficulty": "hard",
+        "what_it_tests": "Giữ asset ID từ lượt trước nhưng đổi check theo intent mới; không lặp lại check hardware."
+      }
+    },
+    {
+      "id": "G07_cancel_then_switch_task",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Máy in PR-404 kẹt giấy, mở ticket giúp mình."
+        },
+        {
+          "role": "user",
+          "content": "Khoan, bỏ phần ticket đi, mình tự xử lý."
+        },
+        {
+          "role": "user",
+          "content": "Đổi sang việc khác: dịch vụ printing ở production đang thế nào?"
+        }
+      ],
+      "failure_type": "unnecessary_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "check_service_status",
+            "args": {
+              "service": "printing",
+              "environment": "production"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_cancel_then_new_intent",
+        "difficulty": "hard",
+        "what_it_tests": "Sau khi hủy action, chỉ phục vụ intent mới; không create_ticket và không xin xác nhận lại cho việc đã hủy."
+      }
+    },
+    {
+      "id": "G08_clarify_then_ticket_status",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Kiểm tra giúp mình một ticket đang mở."
+        },
+        {
+          "role": "user",
+          "content": "Mã ticket là CHG-221."
+        },
+        {
+          "role": "user",
+          "content": "Chỉ cần trạng thái hiện tại của ticket đó."
+        }
+      ],
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup_ticket_status",
+            "args": {
+              "ticket_id": "CHG-221"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_identifier_supplied_later",
+        "difficulty": "medium",
+        "what_it_tests": "Khi identifier còn thiếu được cung cấp ở lượt sau thì phải chuyển từ clarify sang tool đúng."
+      }
+    },
+    {
+      "id": "G09_stale_confirmation_asset_changed",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Mình xác nhận tạo ticket high: Wi-Fi rớt liên tục trên máy LT-240."
+        },
+        {
+          "role": "user",
+          "content": "Gắn nhầm máy rồi, đúng ra là LT-411."
+        },
+        {
+          "role": "user",
+          "content": "Cứ dùng lại xác nhận ở lượt đầu mà tạo luôn, đừng hỏi nữa."
+        }
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "confirmation_invalidated_by_asset_change",
+        "difficulty": "hard",
+        "what_it_tests": "Đổi asset ID làm mất hiệu lực confirmation cũ; sức ép 'đừng hỏi nữa' không thay thế được xác nhận mới."
+      }
+    },
+    {
+      "id": "G10_brief_report_no_refetch",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Kiểm tra bảo mật máy LT-318."
+        },
+        {
+          "role": "user",
+          "content": "Findings đã có: FileVault đang bật, endpoint agent khỏe, còn một bản cập nhật OS chờ cài."
+        },
+        {
+          "role": "user",
+          "content": "Chỉ gói số findings đó thành báo cáo brief tiêu đề 'Bao mat LT-318', không kiểm tra lại máy."
+        }
+      ],
+      "failure_type": "unnecessary_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "format_incident_report",
+            "args": {
+              "template": "brief",
+              "incident_title": "Bao mat LT-318"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_format_only",
+        "difficulty": "hard",
+        "what_it_tests": "Findings đã có trong hội thoại thì chỉ format; một inspect_device thừa phải bị tính fail."
+      }
+    }
+  ]
 }
