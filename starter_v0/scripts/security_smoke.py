@@ -1,9 +1,14 @@
 from __future__ import annotations
 
 import json
+import sys
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
+
+STARTER_ROOT = Path(__file__).resolve().parents[1]
+if str(STARTER_ROOT) not in sys.path:
+    sys.path.insert(0, str(STARTER_ROOT))
 
 from tools.create_ticket import tool as ticket_tool
 from tools.lookup_ticket_status.tool import lookup_ticket_status
