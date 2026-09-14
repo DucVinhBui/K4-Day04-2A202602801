@@ -23,6 +23,12 @@ QUERY_LABELS = {
     "compatibility": "hardware and operating system compatibility",
 }
 INTERNAL_IDENTIFIER = re.compile(r"\b(?:LT|DT|MB|PR|RM|EMP)-\d+\b", re.IGNORECASE)
+RESTRICTED_EXTERNAL_DATA = re.compile(
+    r"(?:\b(?:serial(?:\s*(?:number|no\.?))?|hostname|host\s*name|location|assigned\s*user|"
+    r"diagnostic(?:\s*log)?|ticket(?:\s*content)?|ip(?:\s*address)?|password|passwd|token|"
+    r"api[ _-]?key|mfa|otp|recovery[ _-]?code)\b|\b\d{1,3}(?:\.\d{1,3}){3}\b|\b[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}\b)",
+    re.IGNORECASE,
+)
 
 
 def _domain(url: str) -> str:
@@ -32,7 +38,10 @@ def _domain(url: str) -> str:
 def _safe_external_text(value: str) -> tuple[str, list[str]]:
     safe_lines: list[str] = []
     suspicious_lines: list[str] = []
-    markers = ("system:", "assistant:", "developer:", "ignore previous", "ignore all", "tool_calls_json")
+    markers = (
+        "system:", "assistant:", "developer:", "ignore previous", "ignore all",
+        "tool_calls_json", "prompt injection", "follow these instructions", "# instructions",
+    )
     for line in (value or "").splitlines():
         if any(marker in line.casefold() for marker in markers):
             suspicious_lines.append(line.strip())
@@ -68,6 +77,12 @@ def search_device_info(
             "error": "restricted_internal_identifier",
             "message": "Remove asset and employee identifiers before external search.",
         }
+    if RESTRICTED_EXTERNAL_DATA.search(f"{manufacturer_value} {model_value}"):
+        return {
+            "tool": "search_device_info",
+            "error": "restricted_external_data",
+            "message": "Send only a public manufacturer and model name; remove internal, personal, diagnostic, ticket, network, and credential data.",
+        }
     if query_type_value not in QUERY_LABELS:
         return {"tool": "search_device_info", "error": "invalid_query_type", "query_type": query_type_value}
 
@@ -83,7 +98,12 @@ def search_device_info(
         vendor_key = manufacturer_value.casefold().replace(" ", "-")
         official_domains = VENDOR_DOMAINS.get(vendor_key, [])
         query = f"{manufacturer_value} {model_value} {QUERY_LABELS[query_type_value]} official"
-        limit = min(5, max(1, int(max_results or 3)))
+        if isinstance(max_results, bool):
+            return {"tool": "search_device_info", "error": "invalid_max_results_type"}
+        try:
+            limit = min(5, max(1, int(max_results or 3)))
+        except (TypeError, ValueError):
+            return {"tool": "search_device_info", "error": "invalid_max_results"}
         body: dict[str, Any] = {
             "query": query,
             "search_depth": "basic",

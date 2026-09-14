@@ -1,0 +1,20 @@
+{
+  "tickets": [
+    {
+      "ticket_id": "INC-1042",
+      "status": "in_progress",
+      "priority": "high",
+      "summary": "VPN authentication failures on LT-204",
+      "updated_at": "2026-09-14T08:45:00+07:00",
+      "next_step": "Network team is reviewing authentication logs."
+    },
+    {
+      "ticket_id": "REQ-220",
+      "status": "resolved",
+      "priority": "low",
+      "summary": "Approved driver package request",
+      "updated_at": "2026-09-13T16:20:00+07:00",
+      "next_step": "Verify the installation, then close the request."
+    }
+  ]
+}

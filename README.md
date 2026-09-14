@@ -78,6 +78,7 @@ Học viên nhận được:
 - `policy`: tìm trong IT policy local.
 - `create_ticket`: tạo ticket local sau explicit confirmation.
 - `search_device_info`: dùng Tavily tìm specs, driver hoặc support page công khai.
+- `lookup_ticket_status`: tool bonus do nhóm bổ sung để tra cứu trạng thái ticket giả lập, chỉ đọc.
 
 Các advanced tools có sẵn không được tính là tool mới do nhóm tự xây.
 

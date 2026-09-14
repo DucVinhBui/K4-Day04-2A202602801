@@ -12,9 +12,31 @@ from tools._shared import ROOT, err
 TICKET_DIR = ROOT / "tickets"
 ASSET_ID_PATTERN = re.compile(r"^(?:LT|DT|MB|PR|RM)-\d+$", re.IGNORECASE)
 SENSITIVE_DATA_PATTERN = re.compile(
-    r"\b(?:password|passwd|token|api[ _-]?key|mfa|otp|recovery[ _-]?code)(?:\s*[:=]\s*|\s+(?:is|la|là)\s+)\S+",
+    r"\b(?:password|passwd|token|api[ _-]?key|mfa(?:\s*code)?|otp(?:\s*code)?|recovery[ _-]?code)"
+    r"(?:\s*[:=]\s*|\s+(?:is|la|là|của tôi là|cua toi la)\s+)\S+",
     re.IGNORECASE,
 )
+DUPLICATE_WINDOW_SECONDS = 24 * 60 * 60
+
+
+def _recent_duplicate(summary: str, priority: str, asset_id: str, now: datetime) -> str | None:
+    """Return a matching ticket id created in the idempotency window, if any."""
+    if not TICKET_DIR.exists():
+        return None
+    for path in TICKET_DIR.glob("LAB-*.json"):
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            created_at = datetime.fromisoformat(str(payload.get("created_at", "")).replace("Z", "+00:00"))
+            if created_at.tzinfo is None:
+                continue
+            age_seconds = (now - created_at.astimezone(timezone.utc)).total_seconds()
+            if not 0 <= age_seconds <= DUPLICATE_WINDOW_SECONDS:
+                continue
+            if (payload.get("summary"), payload.get("priority"), payload.get("asset_id") or "") == (summary, priority, asset_id):
+                return str(payload.get("ticket_id") or path.stem)
+        except (OSError, ValueError, json.JSONDecodeError):
+            continue
+    return None
 
 
 def create_ticket(
@@ -33,8 +55,8 @@ def create_ticket(
     normalized_priority = (priority or "medium").strip().lower()
     if not normalized_summary:
         return {"tool": "create_ticket", "error": "missing_summary"}
-    if len(normalized_summary) > 1000:
-        return {"tool": "create_ticket", "error": "summary_too_long", "max_length": 1000}
+    if len(normalized_summary) > 500:
+        return {"tool": "create_ticket", "error": "summary_too_long", "max_length": 500}
     if normalized_priority not in {"low", "medium", "high", "critical"}:
         return {"tool": "create_ticket", "error": "invalid_priority", "priority": normalized_priority}
     normalized_asset = (asset_id or "").strip().upper()
@@ -54,6 +76,14 @@ def create_ticket(
         }
     try:
         now = datetime.now(timezone.utc)
+        duplicate_id = _recent_duplicate(normalized_summary, normalized_priority, normalized_asset, now)
+        if duplicate_id:
+            return {
+                "tool": "create_ticket",
+                "status": "duplicate_suppressed",
+                "ticket_id": duplicate_id,
+                "message": "An identical ticket already exists from the last 24 hours; no new ticket was created.",
+            }
         seed = f"{now.isoformat()}|{normalized_summary}|{normalized_priority}|{normalized_asset}"
         ticket_id = "LAB-" + hashlib.sha256(seed.encode("utf-8")).hexdigest()[:8].upper()
         payload = {
