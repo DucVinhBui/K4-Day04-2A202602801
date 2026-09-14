@@ -9,9 +9,10 @@
 | Họ và tên | MSSV | GitHub username | Vai trò |
 | --- | --- | --- | --- |
 | Bùi Đức Vinh | 2A202602801 | [DucVinhBui](https://github.com/DucVinhBui) | **Nhóm trưởng** · C — Eval & Red-Team: tác giả 10 case `eval_group.json` (G01→G10), kiểm thử 12 adversarial attack, vòng cải tiến prompt v1→v4 và tổng hợp evidence |
-| `<Họ và tên đầy đủ>` | `<MSSV>` | [TuTune04](https://github.com/TuTune04) | A+B — Prompt Architect & Tool Schema: xây `system_prompt.md` qua v1/v2/v3.1, chuẩn hoá enum và description trong `tools.yaml`, cập nhật `search_device_info` |
-| Nguyễn Quang Duy | `<MSSV>` | [nguyenquangduy2005](https://github.com/nguyenquangduy2005) | E — Security & Bonus Tool: rà soát data leakage của external search, xây bonus tool `lookup_ticket_status` kèm smoke test và `E_SECURITY_BONUS.md` |
+| Đinh Công Tú | 2A202602479 | [TuTune04](https://github.com/TuTune04) | A+B — Prompt Architect & Tool Schema: xây `system_prompt.md` qua v1/v2/v3.1, chuẩn hoá enum và description trong `tools.yaml`, cập nhật `search_device_info` |
+| Nguyễn Quang Duy | 2A202602426 | [nguyenquangduy2005](https://github.com/nguyenquangduy2005) | E — Security & Bonus Tool: rà soát data leakage của external search, xây bonus tool `lookup_ticket_status` kèm smoke test và `E_SECURITY_BONUS.md` |
 | Đỗ Phúc Hưng | 2A202602762 | [huwungG](https://github.com/huwungG) | D — UI & Report Coordinator: cấu hình provider/`.env`, chạy baseline eval, tổng hợp `artifacts/REPORT.md` |
+| Bùi Đức Thông | 2A202602931 | [thongbuind](https://github.com/thongbuind) | D — UI & Report Coordinator: cấu hình provider/`.env` |
 
 ## Bằng chứng đóng góp trên branch nộp bài
 
