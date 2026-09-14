@@ -23,6 +23,12 @@ QUERY_LABELS = {
     "compatibility": "hardware and operating system compatibility",
 }
 INTERNAL_IDENTIFIER = re.compile(r"\b(?:LT|DT|MB|PR|RM|EMP)-\d+\b", re.IGNORECASE)
+RESTRICTED_INTERNAL_MARKER = re.compile(
+    r"\b(?:serial(?:\s+number)?|service\s+tag|s/n|host\s*name|employee\s+id|"
+    r"asset\s+id|assigned\s+(?:user|to)|ip\s+address|diagnostics?|location|"
+    r"password|token|api[ _-]?key|mfa|otp|ticket)\b",
+    re.IGNORECASE,
+)
 
 
 def _domain(url: str) -> str:
@@ -62,11 +68,12 @@ def search_device_info(
         return {"tool": "search_device_info", "error": "missing_public_product_identity"}
     if len(manufacturer_value) > 80 or len(model_value) > 160:
         return {"tool": "search_device_info", "error": "public_product_identity_too_long"}
-    if INTERNAL_IDENTIFIER.search(f"{manufacturer_value} {model_value}"):
+    public_identity = f"{manufacturer_value} {model_value}"
+    if INTERNAL_IDENTIFIER.search(public_identity) or RESTRICTED_INTERNAL_MARKER.search(public_identity):
         return {
             "tool": "search_device_info",
-            "error": "restricted_internal_identifier",
-            "message": "Remove asset and employee identifiers before external search.",
+            "error": "restricted_internal_data",
+            "message": "Provide only a public manufacturer and public model name; remove internal identifiers and metadata.",
         }
     if query_type_value not in QUERY_LABELS:
         return {"tool": "search_device_info", "error": "invalid_query_type", "query_type": query_type_value}
