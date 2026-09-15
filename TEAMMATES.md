@@ -11,8 +11,8 @@
 | Bùi Đức Vinh | 2A202602801 | [DucVinhBui](https://github.com/DucVinhBui) | **Nhóm trưởng** · C — Eval & Red-Team: tác giả 10 case `eval_group.json` (G01→G10), kiểm thử 12 adversarial attack, vòng cải tiến prompt v1→v4 và tổng hợp evidence |
 | Đinh Công Tú | 2A202602479 | [TuTune04](https://github.com/TuTune04) | A+B — Prompt Architect & Tool Schema: xây `system_prompt.md` qua v1/v2/v3.1, chuẩn hoá enum và description trong `tools.yaml`, cập nhật `search_device_info` |
 | Nguyễn Quang Duy | 2A202602426 | [nguyenquangduy2005](https://github.com/nguyenquangduy2005) | E — Security & Bonus Tool: rà soát data leakage của external search, xây bonus tool `lookup_ticket_status` kèm smoke test và `E_SECURITY_BONUS.md` |
-| Đỗ Phúc Hưng | 2A202602762 | [huwungG](https://github.com/huwungG) | D — UI & Report Coordinator: cấu hình provider/`.env`, chạy baseline eval, tổng hợp `artifacts/REPORT.md` |
-| Bùi Đức Thông | 2A202602931 | [thongbuind](https://github.com/thongbuind) | D — UI & Report Coordinator: cấu hình provider/`.env` |
+| Đỗ Phúc Hưng | 2A202602762 | [huwungG](https://github.com/huwungG) | Provider & Baseline: cấu hình `.env`/OpenRouter key, chạy baseline eval v0 lấy run evidence đầu tiên, viết `artifacts/REPORT.md` phần A |
+| Bùi Đức Thông | 2A202602931 | [thongbuind](https://github.com/thongbuind) | D — UI & Report Lead: dựng Live Chat Streamlit `starter_v0/app.py` tái sử dụng `run_model_tool_loop`, hiển thị tool call/args/result/error và artifact version; điền `artifacts/REPORT.md` phần B1–B4a |
 
 ## Bằng chứng đóng góp trên branch nộp bài
 
@@ -24,12 +24,15 @@ lịch sử `main`.
 | Bùi Đức Vinh | `VinhBuii <dbui9708@uni.sydney.edu.au>` | `9ca626a` | `system_prompt.md` — sửa rule `clarify`/`response_type` |
 | | | `5bd7bc6` | `TEAMMATES.md` — bản đầu |
 | | | `d8fe114` | `eval_group.json` (10 case), `C_EVAL_REDTEAM.md`, `version_log.csv` v0→v4, 14 run trong `evidence/`, prompt v3/v4 và `tools.yaml` |
+| | | `3d4ad73` | `reflections/2A202602801-bui-duc-vinh.md` |
+| | | `acb80a6`, `c6ded09` | `TEAMMATES.md` — bổ sung thành viên, MSSV và bảng bằng chứng |
 | TuTune04 | `TuTune04 <baygiolamaygio04@gmail.com>` | `01df29b` | `system_prompt.md` v1 + `tools.yaml` |
 | | | `8118669` | `system_prompt.md` v2, `tools.yaml`, `search_device_info` |
 | | | `943e6eb` | `system_prompt.md` v3.1 + `tools.yaml` |
 | Nguyễn Quang Duy | `Nguyen Quang Duy <quangduy230905@gmail.com>` | `28952c0` | Bonus tool `lookup_ticket_status` (tool, `TOOL.md`, registry, schema), `eval_security_bonus.json`, `smoke_ticket_status.py`, `E_SECURITY_BONUS.md` |
 | Đỗ Phúc Hưng | `huwung <13dophuchung05@gmail.com>` | `44093b3` | `artifacts/REPORT.md` phần A, `reflections/2A202602762-do-phuc-hung.md`, dọn `.env.example` |
 | | | `24433bf` | `TEAMMATES.md` |
+| Bùi Đức Thông | `thongbuind <thongbuind2005@gmail.com>` | `4747a32` | `starter_v0/app.py` (Streamlit live chat, 188 dòng), `artifacts/REPORT.md` phần B1–B4a, `requirements.txt` |
 
 Kiểm tra lại bằng lệnh:
 
